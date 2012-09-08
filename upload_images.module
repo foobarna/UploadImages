@@ -1,0 +1,34 @@
+<?php
+function upload_images_init(){
+
+	return ;
+}
+
+function upload_images_permission() {
+	return array(
+		'administer upload_images' => array(
+			'title' => t('Administer Image Upload module'),
+			'description' => t('Administrating tasks for Upload Images module'),
+		),
+	);
+}
+
+function upload_images_menu() {
+	$items['admin/config/upload_images'] = array(
+		'title' => 'Upload Images',
+		'description' => 'Upload Images configuration',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('upload_images_admin_settings'),
+		'access arguments' => array('administer upload_images'),
+		'file' => 'upload_images.admin.inc',
+		'file_path' => drupal_get_path('module','upload_images')
+	);
+	$items['upload_images-page'] = array(
+		'page callback' => 'upload_images_page',
+		'access arguments' => array('access content'),
+		'type' => MENU_CALLBACK,
+		'file' => 'upload_images.page.inc',
+		'file_path' => drupal_get_path('module','upload_images'),
+	);
+	return $items;
+}
