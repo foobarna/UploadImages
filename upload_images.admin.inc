@@ -12,5 +12,14 @@ function upload_images_admin_settings() {
 		'#title' => t('Create nodes?'),
 		'#type' => 'checkbox',
 	);
+	$form["submit"] = array(
+		"#type" => "submit",
+		"#value" => "Next",
+	);
 	return system_settings_form($form);
+}
+
+function upload_images_admin_settings_validate() {
+	//validate function for config form!
+	// form_set_error('upload_images_path','example text');
 }

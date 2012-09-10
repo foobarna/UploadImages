@@ -24,6 +24,7 @@ function upload_images_menu() {
 		'file_path' => drupal_get_path('module','upload_images')
 	);
 	$items['upload_images-page'] = array(
+		'title' => 'Output',
 		'page callback' => 'upload_images_page',
 		'access arguments' => array('access content'),
 		'type' => MENU_CALLBACK,
