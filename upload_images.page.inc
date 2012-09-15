@@ -2,15 +2,42 @@
 function upload_images_page(){
 	$path = variable_get('upload_images_path','');
 	if (!is_dir($path)) {
-		return 'This is not a valid path to a dir!';
+		$output = array(
+			'#type' => 'markup',
+			'#markup' => '<p>Invalid path of dir!</p>',
+		);
+		return $output;
 	}
-	$output = 'These are the items: <br>';
 	$accept = array('jpg','bmp','jpeg');
 	$files = get_files($path,$accept);
-	foreach ($files as $name => $path) {
-		$output .= '<a href=' . urlencode($path) . '>'. $name . '</a><br>';
-	}
+	variable_set('files',$files);
+	$output = array(
+		'list_images' => array(
+			'#items' => array_flip($files),
+			'#title' => 'Images from folders',
+			'#theme' => 'item_list'
+		),
+		'submit_form' => drupal_get_form('submit_create_node_form'),
+	);
 	return $output;
+}
+
+function submit_create_node_form(){
+	$form['submit'] = array(
+		'#type' => 'submit',
+		'#value' => 'Submit',
+	);
+	return $form;
+}
+
+function submit_create_node_form_submit(){
+	$var = variable_get('files','0');
+	// $var = 1;
+	if ($var) {
+		drupal_set_message('variable images is NOT empty!','warning');
+	} else {
+		drupal_set_message('variable images is  empty!','warning');
+	}
 }
 
 function accepted($name, $accept){

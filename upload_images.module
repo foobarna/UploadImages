@@ -1,6 +1,5 @@
 <?php
 function upload_images_init(){
-
 	return ;
 }
 
@@ -23,13 +22,32 @@ function upload_images_menu() {
 		'file' => 'upload_images.admin.inc',
 		'file_path' => drupal_get_path('module','upload_images')
 	);
-	$items['upload_images-page'] = array(
-		'title' => 'Output',
+	$items['admin/config/upload_images/default'] = array(
+		'title' => 'Path',
+		'type' => MENU_DEFAULT_LOCAL_TASK,
+		'weight' => -1,
+	);
+	$items['admin/config/upload_images/node'] = array(
+		'title' => 'Create',
 		'page callback' => 'upload_images_page',
 		'access arguments' => array('access content'),
-		'type' => MENU_CALLBACK,
+		'type' => MENU_LOCAL_TASK,
 		'file' => 'upload_images.page.inc',
 		'file_path' => drupal_get_path('module','upload_images'),
+		'weight' => 1,
 	);
 	return $items;
+}
+
+function upload_images_form_alter(&$form, &$form_state, $form_id) {
+	switch ($form_id) {
+		case 'edit_submit':
+			$form['submit']['submit']['#value'] = 'works';
+			break;
+
+		default:
+			# code...
+			break;
+	}
+	return;
 }
