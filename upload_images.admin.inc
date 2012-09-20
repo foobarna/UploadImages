@@ -7,14 +7,6 @@ function upload_images_admin_settings() {
 		'#default_value' => variable_get('upload_images_path',''),
 		'#required' => TRUE,
 	);
-	// $form['upload_images_go'] = array(
-	// 	'#title' => t('Create nodes?'),
-	// 	'#type' => 'checkbox',
-	// );
-	$form["test"] = array(
-		"#type" => "submit",
-		"#value" => "Test",
-	);
 	return system_settings_form($form);
 }
 

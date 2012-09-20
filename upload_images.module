@@ -1,7 +1,4 @@
 <?php
-function upload_images_init(){
-	return ;
-}
 
 function upload_images_permission() {
 	return array(
@@ -39,15 +36,15 @@ function upload_images_menu() {
 	return $items;
 }
 
-function upload_images_form_alter(&$form, &$form_state, $form_id) {
-	switch ($form_id) {
-		case 'edit_submit':
-			$form['submit']['submit']['#value'] = 'works';
-			break;
+// function upload_images_form_alter(&$form, &$form_state, $form_id) {
+// 	switch ($form_id) {
+// 		case 'edit_submit':
+// 			$form['submit']['submit']['#value'] = 'works';
+// 			break;
 
-		default:
-			# code...
-			break;
-	}
-	return;
-}
+// 		default:
+// 			# code...
+// 			break;
+// 	}
+// 	return;
+// }

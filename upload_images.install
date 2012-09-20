@@ -1,0 +1,123 @@
+<?php
+/**
+ * Implements hook_install().
+ */
+function upload_images_install() {
+	$t = get_t();
+	//define node type
+	$newstuff = array(
+		'type' => 'newstuff2',
+		'name' => $t('New asdf'),
+		'base' => 'node_content',
+		'description' => $t('lorem ipsum'),
+		'body_label' => $t('Content')
+	);
+
+	$content_type = node_type_set_defaults($newstuff);
+
+	node_add_body_field($content_type);
+
+	node_type_save($content_type);
+
+	foreach (_newstuff_installed_fields() as $field) {
+		field_create_field($field);
+	}
+
+	foreach (_newstuff_installed_instances() as $instance) {
+		$instance['entity_type'] = 'node';
+		$instance['bundle'] = $newstuff['type'];
+		field_create_instance($instance);
+	}
+}
+
+function _newstuff_installed_fields() {
+	return array(
+		'newstuff_example_field' => array(
+			'field_name' => 'newstuff_example_field',
+			'type' => 'text',
+			'cardinality' =>1,
+			),
+		'newstuff_image' => array(
+			'field_name' => 'newstuff_image',
+			'type' => 'image',
+			'cardinality' => 1,
+		),
+	);
+}
+
+function _newstuff_installed_instances() {
+	$t = get_t();
+	return array(
+		'newstuff_example_field' => array(
+			'field_name' => 'newstuff_example_field',
+			'label' => $t('eg text field'),
+			'type' => 'text',
+			'widget' => array('type' => 'text_textfield'),
+		),
+		'newstuff_image' => array(
+			'field_name' => 'newstuff_image',
+			'label' => $t('up da image'),
+			'required' => FALSE,
+			'widget' => array('type' => 'image_image'),
+		),
+	);
+}
+// function upload_images_install() {
+//  	$t = get_t();
+// 	//define the content(node) type
+// 	$uploadimages = array(
+// 		'type' => 'uploadimages',
+// 		'name' => $t('Upload Images'),
+// 		'base' => 'node_content',
+// 		'description' => $t('a placeholder for description'),
+// 		'body_label' => $t('Content')
+// 	);
+
+// 	//set the defaults
+// 	$content_type = node_type_set_defaults($uploadimages);
+
+// 	// add the body field
+// 	node_add_body_field($content_type);
+
+// 	//save the content type
+// 	node_type_save($content_type);
+
+// 	// set
+// 	// $body_instance = field_info_instance('node', 'body', 'uploadimages');
+
+// 	//create fields
+// 	foreach (_uploadimages_installed_fields() as $field) {
+// 		field_creat_field($field);
+// 	}
+
+// 	//create instances of fields
+// 	foreach (_uploadimages_installed_instances() as $instance) {
+// 		$instance['entity_type'] = 'node';
+// 		$instance['bundle'] = $uploadimages['type'];
+// 		field_create_instance($instance);
+// 	}
+// }
+
+// function _uploadimages_installed_fields() {
+// 	return array(
+// 		'uploadimages_image' => array(
+// 			'field_name' => 'uploadimages_image',
+// 			'type' => 'image',
+// 			'cardinality' => 1,
+// 		),
+// 	);
+// }
+
+// function _uploadimages_installed_instances() {
+// 	$t = get_t();
+// 	return array(
+// 		'uploadimages_image' => array(
+// 			'field_name' => 'uploadimages_image',
+// 			'label' => $t('get the image'),
+// 			'required' => FALSE,
+// 			'widget' => array(
+// 				'type' => 'image_image',
+// 			),
+// 		),
+// 	);
+// }
