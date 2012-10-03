@@ -1,123 +1,88 @@
 <?php
-/**
- * Implements hook_install().
- */
 function upload_images_install() {
 	$t = get_t();
 	//define node type
-	$newstuff = array(
-		'type' => 'newstuff2',
-		'name' => $t('New asdf'),
+	$upload_images = array(
+		'type' => 'upload_images',
+		'name' => $t('Upload images Content Type'),
 		'base' => 'node_content',
-		'description' => $t('lorem ipsum'),
+		'description' => $t('A Content Type for Upload Images Module'),
 		'body_label' => $t('Content')
 	);
 
-	$content_type = node_type_set_defaults($newstuff);
+	$content_type = node_type_set_defaults($upload_images);
 
-	node_add_body_field($content_type);
+	// node_add_body_field($content_type);
 
 	node_type_save($content_type);
 
-	foreach (_newstuff_installed_fields() as $field) {
+	foreach (_upload_images_installed_fields() as $field) {
 		field_create_field($field);
 	}
 
-	foreach (_newstuff_installed_instances() as $instance) {
+	foreach (_upload_images_installed_instances() as $instance) {
 		$instance['entity_type'] = 'node';
-		$instance['bundle'] = $newstuff['type'];
+		$instance['bundle'] = $upload_images['type'];
 		field_create_instance($instance);
 	}
 }
 
-function _newstuff_installed_fields() {
+function upload_images_uninstall() {
+	$sql = "SELECT nid FROM {node} n WHERE n.type = :type";
+	$result = db_query($sql,array(':type' => 'upload_images'));
+	$nids =array();
+	foreach ($result as $row) {
+		$nids[] = $row->nid;
+	}
+	node_delete_multiple($nids);
+
+	//del fields
+	foreach (array_keys(_upload_images_installed_fields()) as $field) {
+		field_delete_field($field);
+	}
+
+	//del content type
+	$instances = field_info_instances('node','upload_images');
+	foreach ($instances as $instance_name => $instance) {
+		field_delete_instance($instance);
+	}
+
+	node_type_delete('upload_images');
+
+	field_purge_batch(1000);
+}
+
+
+function _upload_images_installed_fields() {
 	return array(
-		'newstuff_example_field' => array(
-			'field_name' => 'newstuff_example_field',
-			'type' => 'text',
+		'upload_images_tag_field' => array(
+			'field_name' => 'upload_images_tag_field',
+			'type' => 'taxonomy_term_reference',
 			'cardinality' =>1,
 			),
-		'newstuff_image' => array(
-			'field_name' => 'newstuff_image',
+		'upload_images_image' => array(
+			'field_name' => 'upload_images_image',
 			'type' => 'image',
 			'cardinality' => 1,
 		),
 	);
 }
 
-function _newstuff_installed_instances() {
+function _upload_images_installed_instances() {
 	$t = get_t();
 	return array(
-		'newstuff_example_field' => array(
-			'field_name' => 'newstuff_example_field',
-			'label' => $t('eg text field'),
-			'type' => 'text',
-			'widget' => array('type' => 'text_textfield'),
+		'upload_images_tag_field' => array(
+			'field_name' => 'upload_images_tag_field',
+			'description' => 'Enter a list of tags as comma-separated',
+			'label' => $t('Tags field'),
+			'type' => 'taxonomy_term_reference',
+			'widget' => array('type' => 'taxonomy_autocomplete'),
 		),
-		'newstuff_image' => array(
-			'field_name' => 'newstuff_image',
-			'label' => $t('up da image'),
-			'required' => FALSE,
+		'upload_images_image' => array(
+			'field_name' => 'upload_images_image',
+			'label' => $t('Image'),
+			'required' => TRUE,
 			'widget' => array('type' => 'image_image'),
 		),
 	);
 }
-// function upload_images_install() {
-//  	$t = get_t();
-// 	//define the content(node) type
-// 	$uploadimages = array(
-// 		'type' => 'uploadimages',
-// 		'name' => $t('Upload Images'),
-// 		'base' => 'node_content',
-// 		'description' => $t('a placeholder for description'),
-// 		'body_label' => $t('Content')
-// 	);
-
-// 	//set the defaults
-// 	$content_type = node_type_set_defaults($uploadimages);
-
-// 	// add the body field
-// 	node_add_body_field($content_type);
-
-// 	//save the content type
-// 	node_type_save($content_type);
-
-// 	// set
-// 	// $body_instance = field_info_instance('node', 'body', 'uploadimages');
-
-// 	//create fields
-// 	foreach (_uploadimages_installed_fields() as $field) {
-// 		field_creat_field($field);
-// 	}
-
-// 	//create instances of fields
-// 	foreach (_uploadimages_installed_instances() as $instance) {
-// 		$instance['entity_type'] = 'node';
-// 		$instance['bundle'] = $uploadimages['type'];
-// 		field_create_instance($instance);
-// 	}
-// }
-
-// function _uploadimages_installed_fields() {
-// 	return array(
-// 		'uploadimages_image' => array(
-// 			'field_name' => 'uploadimages_image',
-// 			'type' => 'image',
-// 			'cardinality' => 1,
-// 		),
-// 	);
-// }
-
-// function _uploadimages_installed_instances() {
-// 	$t = get_t();
-// 	return array(
-// 		'uploadimages_image' => array(
-// 			'field_name' => 'uploadimages_image',
-// 			'label' => $t('get the image'),
-// 			'required' => FALSE,
-// 			'widget' => array(
-// 				'type' => 'image_image',
-// 			),
-// 		),
-// 	);
-// }
