@@ -25,7 +25,7 @@ function upload_images_page(){
 function submit_create_node_form(){
 	$form['submit'] = array(
 		'#type' => 'submit',
-		'#value' => 'Submit',
+		'#value' => 'Create',
 	);
 	return $form;
 }
@@ -43,8 +43,8 @@ function submit_create_node_form_submit(){
 function accepted($name, $accept){
 	if (empty($accept)) { return TRUE;}
 	foreach ($accept as $ext) {
-		$reg = '\.' . $ext . '$';
-		if (eregi($reg,$name)) {
+		$reg = '/\.' . $ext . '$/i';
+		if (preg_match($reg,$name)) {
 			return TRUE;
 		}
 	}
@@ -70,4 +70,3 @@ function get_files($path, $accept=array()){
 	closedir($dir);
 	return $files;
 }
-

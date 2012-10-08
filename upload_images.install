@@ -25,6 +25,7 @@ function upload_images_install() {
 		$instance['bundle'] = $upload_images['type'];
 		field_create_instance($instance);
 	}
+	_create_vocabulary();
 }
 
 function upload_images_uninstall() {
@@ -50,6 +51,7 @@ function upload_images_uninstall() {
 	node_type_delete('upload_images');
 
 	field_purge_batch(1000);
+	_delete_vocabulary();
 }
 
 
@@ -85,4 +87,21 @@ function _upload_images_installed_instances() {
 			'widget' => array('type' => 'image_image'),
 		),
 	);
+}
+
+function _create_vocabulary() {
+	$vocabulary = (object) array(
+		'name' => t('Upload Images vocabulary'),
+		'machine_name' => 'upload_images_vocabulary',
+		'description' => 'A Taxonomy vocabulary used by Upload Images Module',
+		'module' => 'upload_images',
+		'hierarchy' => 1,
+		'weight' => -10,
+	);
+	taxonomy_vocabulary_save($vocabulary);
+}
+
+function _delete_vocabulary() {
+	$vocabulary = taxonomy_vocabulary_machine_name_load('upload_images_vocabulary');
+	taxonomy_vocabulary_delete($vocabulary->vid);
 }
