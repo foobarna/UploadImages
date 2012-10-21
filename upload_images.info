@@ -1,10 +1,13 @@
 name = Upload Images Modules
 description = "Upload images from a folder and tag them"
-package = Custom Module
+package = A
 core = 7.x
 php = 5.x
+
 configure = admin/config/upload_images
+
 dependencies[] = taxonomy
+
 files[] = upload_images.module
 files[] = upload_images.admin.inc
 files[] = upload_images.page.inc

@@ -1,6 +1,7 @@
 <?php
 function upload_images_install() {
 	$t = get_t();
+	_create_vocabulary();
 	//define node type
 	$upload_images = array(
 		'type' => 'upload_images',
@@ -25,7 +26,6 @@ function upload_images_install() {
 		$instance['bundle'] = $upload_images['type'];
 		field_create_instance($instance);
 	}
-	_create_vocabulary();
 }
 
 function upload_images_uninstall() {
@@ -60,12 +60,23 @@ function _upload_images_installed_fields() {
 		'upload_images_tag_field' => array(
 			'field_name' => 'upload_images_tag_field',
 			'type' => 'taxonomy_term_reference',
-			'cardinality' =>1,
+			'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+			'settings' => array(
+				'allowed_values' => array(
+					0 => array(
+						'vocabulary' => 'upload_images_vocabulary',
+						'parent' => 0,
+					),
+				),
 			),
+		),
 		'upload_images_image' => array(
 			'field_name' => 'upload_images_image',
 			'type' => 'image',
 			'cardinality' => 1,
+			'settings' => array(
+				'image_style' => 'thumbnail',
+			),
 		),
 	);
 }
@@ -75,23 +86,33 @@ function _upload_images_installed_instances() {
 	return array(
 		'upload_images_tag_field' => array(
 			'field_name' => 'upload_images_tag_field',
-			'description' => 'Enter a list of tags as comma-separated',
+			'description' => $t('Enter a list of tags as comma-separated'),
 			'label' => $t('Tags field'),
 			'type' => 'taxonomy_term_reference',
 			'widget' => array('type' => 'taxonomy_autocomplete'),
+			// '#autocomplete_path' => 'taxonomy/autocomplete/upload_images_vocabulary',
 		),
 		'upload_images_image' => array(
 			'field_name' => 'upload_images_image',
 			'label' => $t('Image'),
-			'required' => TRUE,
 			'widget' => array('type' => 'image_image'),
+			'disply' => array(
+				'default' => array(
+					'label' => 'above', // default
+					'type' => 'image', // default
+					'settings' => array(
+				        'image_style' => 'thumbnail', // default is ? FIXME
+				        'image_link' => '', // default
+					),
+				),
+			),
 		),
 	);
 }
 
 function _create_vocabulary() {
 	$vocabulary = (object) array(
-		'name' => t('Upload Images vocabulary'),
+		'name' => 'Upload Images vocabulary',
 		'machine_name' => 'upload_images_vocabulary',
 		'description' => 'A Taxonomy vocabulary used by Upload Images Module',
 		'module' => 'upload_images',
