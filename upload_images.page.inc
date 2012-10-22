@@ -139,5 +139,3 @@ function _create_content($files) {
 		node_save($node);
 	}
 }
-
-function _
