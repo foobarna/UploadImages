@@ -24,12 +24,12 @@ function upload_images_menu() {
 		'type' => MENU_DEFAULT_LOCAL_TASK,
 		'weight' => -1,
 	);
-	$items['admin/config/upload_images/node'] = array(
+	$items['admin/config/upload_images/create'] = array(
 		'title' => 'Create',
-		'page callback' => 'upload_images_page',
+		'page callback' => 'upload_images_create',
 		'access arguments' => array('access content'),
 		'type' => MENU_LOCAL_TASK,
-		'file' => 'upload_images.page.inc',
+		'file' => 'upload_images.create.inc',
 		'file_path' => drupal_get_path('module','upload_images'),
 		'weight' => 1,
 	);

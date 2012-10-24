@@ -10,5 +10,5 @@ dependencies[] = taxonomy
 
 files[] = upload_images.module
 files[] = upload_images.admin.inc
-files[] = upload_images.page.inc
-file[] = upload_images.install
+files[] = upload_images.create.inc
+files[] = upload_images.install

@@ -1,5 +1,5 @@
 <?php
-function upload_images_page(){
+function upload_images_create(){
 	$path = variable_get('upload_images_path','');
 	if (!is_dir($path)) {
 		$output = array(
@@ -20,9 +20,10 @@ function upload_images_page(){
 			'submit_form' => drupal_get_form('submit_create_node_form'),
 		);
 	} else {
+		$output_array = array_keys($files);
 		$output = array(
 			'list_images' => array(
-				'#items' => array_flip($files),
+				'#items' => $output_array,
 				'#title' => 'Images from folders',
 				'#theme' => 'item_list'
 			),
@@ -51,30 +52,6 @@ function submit_create_node_form_submit(){
 	global $user;
 
 	print_r($var);
-		$key = 'Screenshot from 2012-10-06 00:46:02.png';
-	foreach ($var as $key => $value) {
-		$node = new stdClass();
-		$node->title = $key;
-		$node->type = 'upload_images';
-		node_object_prepare($node);
-		$node->language = LANGUAGE_NONE;
-		$node->uid = $user->uid;
-		$node->status = 1;
-		$node->promote = 1;
-		$node->comment = 1;
-		$filepath = $value;
-  		$file = (object) array(
-    		'uid' => 1,
-    		'uri' => $filepath,
-    		'filemime' => file_get_mimetype($filepath),
-		    'status' => 1,
-		);
-  		$file = file_copy($file, 'public://');
-  		$node->upload_images_image[$node->language][0] = (array)$file;
-		// $node->upload_images_tag_field[$node->language][]['tid'] = 7;
-		$node = node_submit($node); // Prepare node for saving
-		node_save($node);
-	}
 }
 
 function _accepted($name, $accept){
@@ -88,7 +65,7 @@ function _accepted($name, $accept){
 	return FALSE;
 }
 
-function _get_files($path, $accept=array()){
+function _get_files2($path, $accept=array()){
 	$dir = opendir($path);
 	$files = array();
 	while ($entry = readdir($dir)) {
@@ -96,12 +73,38 @@ function _get_files($path, $accept=array()){
 			$next_path = $path . "/";
 			$next_path .= $entry;
 			if (is_dir($next_path)) {
-				$files_next = _get_files($next_path,$accept);
+				$files_next = _get_files2($next_path,$accept);
 				asort($files_next);
 				$files = array_merge($files, $files_next);
 			} elseif (_accepted($entry, $accept)) {
-				$files[$entry] = $next_path;
+				$files[$next_path] = $entry;
 			}
+		}
+	}
+	closedir($dir);
+	return $files;
+}
+
+function _get_files($path, $accept, $rel_path = ""){
+	$dir = opendir($path);
+	$files = array();
+	while ($entry = readdir($dir)) {
+		if (substr($entry, 0, 1) == ".") { continue; }
+		$next_path = $path . "/";
+		$next_path .= $entry;
+		$next_rel_path = $rel_path . "/";
+		$next_rel_path .= $entry;
+		if (is_dir($next_path)) {
+			$files_next = _get_files($next_path,$accept, $next_rel_path);
+			// asort($files_next);
+			$files = array_merge($files, $files_next);
+		} elseif (_accepted($entry, $accept)) {
+
+			$files[$next_rel_path] = array(
+								"#name" => $entry,
+								"#rel_path" => $next_rel_path,
+								"#taxonomy_terms" => _taxonomy_terms($rel_path),
+								);
 		}
 	}
 	closedir($dir);
@@ -112,6 +115,10 @@ function _get_accepted_ext() {
 	$s = variable_get('upload_images_accepts','');
 	$s = preg_replace('/\s+/','', $s);
 	return explode(',',$s);
+}
+
+function _taxonomy_terms($rel_path){
+	return explode('/',$rel_path);
 }
 
 function _create_content($files) {
@@ -139,5 +146,3 @@ function _create_content($files) {
 		node_save($node);
 	}
 }
-
-function _
