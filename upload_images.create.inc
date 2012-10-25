@@ -50,8 +50,10 @@ function submit_create_node_form_submit(){
 		drupal_set_message('There are no images!','error');
 	}
 	global $user;
+	// _add_taxonomy_term("works? again", 9, 14);
+	// _add_taxonomy_terms(array('a', 'b', 'c', 'd', 'e','f','g'));
+	// print_r(array_keys($var));
 
-	print_r($var);
 }
 
 function _accepted($name, $accept){
@@ -63,26 +65,6 @@ function _accepted($name, $accept){
 		}
 	}
 	return FALSE;
-}
-
-function _get_files2($path, $accept=array()){
-	$dir = opendir($path);
-	$files = array();
-	while ($entry = readdir($dir)) {
-		if (substr($entry, 0, 1) != ".") {
-			$next_path = $path . "/";
-			$next_path .= $entry;
-			if (is_dir($next_path)) {
-				$files_next = _get_files2($next_path,$accept);
-				asort($files_next);
-				$files = array_merge($files, $files_next);
-			} elseif (_accepted($entry, $accept)) {
-				$files[$next_path] = $entry;
-			}
-		}
-	}
-	closedir($dir);
-	return $files;
 }
 
 function _get_files($path, $accept, $rel_path = ""){
@@ -99,10 +81,9 @@ function _get_files($path, $accept, $rel_path = ""){
 			// asort($files_next);
 			$files = array_merge($files, $files_next);
 		} elseif (_accepted($entry, $accept)) {
-
 			$files[$next_rel_path] = array(
 								"#name" => $entry,
-								"#rel_path" => $next_rel_path,
+								"#full_path" => $next_path,
 								"#taxonomy_terms" => _taxonomy_terms($rel_path),
 								);
 		}
@@ -117,8 +98,40 @@ function _get_accepted_ext() {
 	return explode(',',$s);
 }
 
-function _taxonomy_terms($rel_path){
+function _taxonomy_terms($rel_path) {
 	return explode('/',$rel_path);
+}
+
+function _add_taxonomy_term($term = "", $vid = 0, $pid = 0) {
+	$new_term = array(
+					'vid' => $vid,
+					'name' => $term,
+					'parent' => $pid,
+				);
+	// if (!empty($pid)) $new_term[] = array('parent' => $pid);
+	$new_term = (object)$new_term;
+	taxonomy_term_save($new_term);
+	return $new_term->tid;
+}
+
+function _add_taxonomy_terms($terms = array()) {
+	$vocabulary = taxonomy_vocabulary_machine_name_load("upload_images_vocabulary");
+	foreach ($terms as $term_name) {
+		$existing_terms = taxonomy_get_term_by_name($term_name, $vocabulary->machine_name);
+		if ($existing_terms) {
+			foreach ($existing_terms as $term)
+				if ($term->vid == $vocabulary->vid) {
+					$pid = $term->tid;
+					break;
+				}
+			continue;
+		}
+		$pid = _add_taxonomy_term($term_name, $vocabulary->vid, $pid);
+	}
+}
+
+function _create_node($prenode_infos = array()) {
+
 }
 
 function _create_content($files) {

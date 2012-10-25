@@ -1,5 +1,4 @@
 <?php
-
 function upload_images_permission() {
 	return array(
 		'administer upload_images' => array(
