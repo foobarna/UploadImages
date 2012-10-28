@@ -166,7 +166,7 @@ function _create_node($prenode) {
 		'filemime' => file_get_mimetype($filepath),
 		'status' => 1,
 	);
-	$file = file_copy($file, 'public:/upload_images_folder/');
+	$file = file_copy($file, 'public://');
 	$node->upload_images_image[$node->language][0] = (array)$file;
 	foreach ($tids as $tid) {
 		$node->upload_images_tag_field[$node->language][]['tid'] = $tid;
