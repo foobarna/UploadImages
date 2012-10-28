@@ -95,7 +95,7 @@ function _get_files($path, $accept, $rel_path = ""){
 			$files[$next_rel_path] = array(
 								"#name" => $entry,
 								"#full_path" => $next_path,
-								"#rel_path" => $next_rel_path,
+								"#rel_path" => $rel_path,
 								"#taxonomy_terms" => _taxonomy_terms_from_path($rel_path),
 								);
 		}
@@ -160,12 +160,14 @@ function _create_node($prenode) {
 	$node->comment = 1;
 	$filepath = $prenode["#full_path"];
 	$file = (object) array(
-		'uid' => 1,
+		'uid' => $user->uid,
 		'uri' => $filepath,
 		'filemime' => file_get_mimetype($filepath),
 		'status' => 1,
 	);
-	$file = file_copy($file, 'public://');
+	$dest = 'public://upload_images' . $prenode['#rel_path'];
+	file_prepare_directory($dest,FILE_CREATE_DIRECTORY);
+	$file = file_copy($file, $dest);
 	$node->upload_images_image[$node->language][0] = (array)$file;
 	foreach ($tids as $tid) {
 		$node->upload_images_tag_field[$node->language][]['tid'] = $tid;
