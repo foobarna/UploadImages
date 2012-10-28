@@ -43,25 +43,24 @@ function submit_create_node_form(){
 }
 
 function submit_create_node_form_submit(){
-	$var = variable_get('files','0');
-	if ($var) {
+	$files = variable_get('files','0');
+	if ($files) {
 		drupal_set_message('variable images is NOT empty!','warning');
 	} else {
 		drupal_set_message('There are no images!','error');
 	}
-	global $user;
 	// _create_taxonomy_term("works? again and again", 9, 14);
 	// $bu = _taxonomy_terms_from_path("path/to/absolute/knowledge/");
 	// print_r($bu);
 	// _create_taxonomy_terms(_taxonomy_terms_from_path("/testing3/the3/begining3/or3/ending3///"));
-	$node = array(
-								"#name" => "WORKS!!spoon",
-								"#full_path" => "sites/default/images_module/IspoonNutella.jpg",
-								"#rel_path" => "/IspoonNutella.jpg",
-								"#source_path" => variable_get("upload_images_path", ""),
-								"#taxonomy_terms" => _taxonomy_terms_from_path("/IspoonNutella.jpg"),
-								);
-	_create_node($node);
+	// $node = array(
+	// 							"#name" => "WORKS!",
+	// 							"#full_path" => "sites/default/images_module/IspoonNutella.jpg",
+	// 							"#rel_path" => "/IspoonNutella.jpg",
+	// 							"#source_path" => variable_get("upload_images_path", ""),
+	// 							"#taxonomy_terms" => _taxonomy_terms_from_path("/IspoonNutella.jpg"),
+	// 							);
+	_create_content($files);
 	// print_r(array_keys($var));
 	// drupal_set_message($node["#source_path"],'warning');
 
@@ -176,5 +175,7 @@ function _create_node($prenode) {
 }
 
 function _create_content($files) {
-
+	foreach ($files as $prenode) {
+		_create_node($prenode);
 	}
+}
