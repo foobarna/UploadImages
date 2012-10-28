@@ -22,8 +22,8 @@ function upload_images_admin_settings() {
 function upload_images_admin_settings_validate($form, $form_state) {
 	//validate function for config form!
 	$path = $form_state['values']['upload_images_path'];
-	if (substr($path, -1, 1) != "/") {
-		form_set_error('upload_images_path', t('The path needs to end with a "/" (slash)!'));
+	if (substr($path, -1, 1) == "/") {
+		form_set_error('upload_images_path', t('The path dosen\'t need to end with a "/" (slash)!'));
 	}
 	if (!is_dir($path)) {
 		form_set_error('upload_images_path',t('Not a valid path to a directory!'));
