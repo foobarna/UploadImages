@@ -50,9 +50,21 @@ function submit_create_node_form_submit(){
 		drupal_set_message('There are no images!','error');
 	}
 	global $user;
-	// _add_taxonomy_term("works? again", 9, 14);
-	// _add_taxonomy_terms(array('a', 'b', 'c', 'd', 'e','f','g'));
+	// _create_taxonomy_term("works? again and again", 9, 14);
+	// $bu = _taxonomy_terms_from_path("path/to/absolute/knowledge/");
+	// print_r($bu);
+	// _create_taxonomy_terms(_taxonomy_terms_from_path("/testing3/the3/begining3/or3/ending3///"));
+	$node = array(
+								"#name" => "WORKS!!spoon",
+								"#full_path" => "sites/default/images_module/IspoonNutella.jpg",
+								"#rel_path" => "/IspoonNutella.jpg",
+								"#source_path" => variable_get("upload_images_path", ""),
+								"#taxonomy_terms" => _taxonomy_terms_from_path("/IspoonNutella.jpg"),
+								);
+	_create_node($node);
 	// print_r(array_keys($var));
+	// drupal_set_message($node["#source_path"],'warning');
+
 
 }
 
@@ -84,7 +96,8 @@ function _get_files($path, $accept, $rel_path = ""){
 			$files[$next_rel_path] = array(
 								"#name" => $entry,
 								"#full_path" => $next_path,
-								"#taxonomy_terms" => _taxonomy_terms($rel_path),
+								"#rel_path" => $next_rel_path,
+								"#taxonomy_terms" => _taxonomy_terms_from_path($rel_path),
 								);
 		}
 	}
@@ -98,11 +111,11 @@ function _get_accepted_ext() {
 	return explode(',',$s);
 }
 
-function _taxonomy_terms($rel_path) {
-	return explode('/',$rel_path);
+function _taxonomy_terms_from_path($rel_path) {
+	return array_filter(explode('/',$rel_path));
 }
 
-function _add_taxonomy_term($term = "", $vid = 0, $pid = 0) {
+function _create_taxonomy_term($term = "", $vid = 0, $pid = 0) {
 	$new_term = array(
 					'vid' => $vid,
 					'name' => $term,
@@ -114,8 +127,10 @@ function _add_taxonomy_term($term = "", $vid = 0, $pid = 0) {
 	return $new_term->tid;
 }
 
-function _add_taxonomy_terms($terms = array()) {
+function _create_taxonomy_terms($terms = array()) {
 	$vocabulary = taxonomy_vocabulary_machine_name_load("upload_images_vocabulary");
+	$taxonomy_tids = array();
+	$pid = 0;
 	foreach ($terms as $term_name) {
 		$existing_terms = taxonomy_get_term_by_name($term_name, $vocabulary->machine_name);
 		if ($existing_terms) {
@@ -124,38 +139,42 @@ function _add_taxonomy_terms($terms = array()) {
 					$pid = $term->tid;
 					break;
 				}
-			continue;
+		} else {
+			$pid = _create_taxonomy_term($term_name, $vocabulary->vid, $pid);
 		}
-		$pid = _add_taxonomy_term($term_name, $vocabulary->vid, $pid);
+		$taxonomy_tids[] = $pid;
 	}
+	return $taxonomy_tids;
 }
 
-function _create_node($prenode_infos = array()) {
-
+function _create_node($prenode) {
+	global $user;
+	$tids = _create_taxonomy_terms($prenode["#taxonomy_terms"]);
+	$node = new stdClass();
+	$node->title = $prenode["#name"];
+	$node->type = 'upload_images';
+	node_object_prepare($node);
+	$node->language = LANGUAGE_NONE;
+	$node->uid = $user->uid;
+	$node->status = 1;
+	$node->promote = 1;
+	$node->comment = 1;
+	$filepath = $prenode["#full_path"];
+	$file = (object) array(
+		'uid' => 1,
+		'uri' => $filepath,
+		'filemime' => file_get_mimetype($filepath),
+		'status' => 1,
+	);
+	$file = file_copy($file, 'public://upload_images_folder/');
+	$node->upload_images_image[$node->language][0] = (array)$file;
+	foreach ($tids as $tid) {
+		$node->upload_images_tag_field[$node->language][]['tid'] = $tid;
+	}
+	$node = node_submit($node); // Prepare node for saving
+		node_save($node);
 }
 
 function _create_content($files) {
-	foreach ($var as $key => $value) {
-		$node = new stdClass();
-		$node->title = $key;
-		$node->type = 'upload_images';
-		node_object_prepare($node);
-		$node->language = LANGUAGE_NONE;
-		$node->uid = $user->uid;
-		$node->status = 1;
-		$node->promote = 1;
-		$node->comment = 1;
-		$filepath = $value;
-		$file = (object) array(
-			'uid' => 1,
-			'uri' => $filepath,
-			'filemime' => file_get_mimetype($filepath),
-			'status' => 1,
-		);
-		$file = file_copy($file, 'public://');
-		$node->upload_images_image[$node->language][0] = (array)$file;
-		$node->upload_images_tag_field[$node->language][]['tid'] = 7;
-		$node = node_submit($node); // Prepare node for saving
-		node_save($node);
+
 	}
-}

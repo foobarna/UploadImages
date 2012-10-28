@@ -19,7 +19,17 @@ function upload_images_admin_settings() {
 	return system_settings_form($form);
 }
 
-function upload_images_admin_settings_validate() {
+function upload_images_admin_settings_validate($form, $form_state) {
 	//validate function for config form!
-	// form_set_error('upload_images_path','example text');
+	$path = $form_state['values']['upload_images_path'];
+	if (substr($path, -1, 1) != "/") {
+		form_set_error('upload_images_path', t('The path needs to end with a "/" (slash)!'));
+	}
+	if (!is_dir($path)) {
+		form_set_error('upload_images_path',t('Not a valid path to a directory!'));
+	}
+}
+
+function upload_images_admin_settings_submit() {
+
 }
