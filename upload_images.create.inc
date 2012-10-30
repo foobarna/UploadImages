@@ -49,22 +49,7 @@ function submit_create_node_form_submit(){
 	} else {
 		drupal_set_message('There are no images!','error');
 	}
-	// _create_taxonomy_term("works? again and again", 9, 14);
-	// $bu = _taxonomy_terms_from_path("path/to/absolute/knowledge/");
-	// print_r($bu);
-	// _create_taxonomy_terms(_taxonomy_terms_from_path("/testing3/the3/begining3/or3/ending3///"));
-	// $node = array(
-	// 							"#name" => "WORKS!",
-	// 							"#full_path" => "sites/default/images_module/IspoonNutella.jpg",
-	// 							"#rel_path" => "/IspoonNutella.jpg",
-	// 							"#source_path" => variable_get("upload_images_path", ""),
-	// 							"#taxonomy_terms" => _taxonomy_terms_from_path("/IspoonNutella.jpg"),
-	// 							);
 	_create_content($files);
-	// print_r(array_keys($var));
-	// drupal_set_message($node["#source_path"],'warning');
-
-
 }
 
 function _accepted($name, $accept){

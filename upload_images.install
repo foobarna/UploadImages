@@ -95,14 +95,20 @@ function _upload_images_installed_instances() {
 		'upload_images_image' => array(
 			'field_name' => 'upload_images_image',
 			'label' => $t('Image'),
-			'widget' => array('type' => 'image_image'),
-			'disply' => array(
+			'widget' => array(
+				'type' => 'image_image',
+				'settings' => array(
+					'progress_indicator' => 'bar',				// default is 'throbber'
+					'preview_image_style' => 'thumbnail',
+					),
+				),
+			'display' => array(
 				'default' => array(
 					'label' => 'above', // default
 					'type' => 'image', // default
 					'settings' => array(
-				        'image_style' => 'thumbnail', // default is ? FIXME
-				        'image_link' => '', // default
+						'image_style' => 'thumbnail', // default is ? FIXME
+						'image_link' => 'file', // default
 					),
 				),
 			),
