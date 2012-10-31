@@ -153,7 +153,7 @@ function _create_node($prenode) {
 	);
 	// $dest = variable_get('upload_images_destination', '') . '/upload_images_module_dest' . $prenode['#rel_path'];
 	// $dest = file_build_uri(variable_get('upload_images_destination', '')) . '/upload_images_module_dest32' . $prenode['#rel_path'];
-	$dest = 'public://upload_images_files' . $prenode['#rel_path'];
+	$dest = 'public://upload_images_files/' . variable_get('upload_images_destination', '') . $prenode['#rel_path'];
 	file_prepare_directory($dest,FILE_CREATE_DIRECTORY);
 	$file = file_copy($file, $dest);
 	$node->upload_images_image[$node->language][0] = (array)$file;
