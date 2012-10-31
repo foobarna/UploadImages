@@ -44,8 +44,9 @@ function submit_create_node_form(){
 
 function submit_create_node_form_submit(){
 	$files = variable_get('files','0');
+	$dest = variable_get('upload_images_destination','');
 	if ($files) {
-		drupal_set_message('variable images is NOT empty!','warning');
+		drupal_set_message('variable images is NOT empty!' . $dest,'warning');
 	} else {
 		drupal_set_message('There are no images!','error');
 	}
@@ -150,7 +151,9 @@ function _create_node($prenode) {
 		'filemime' => file_get_mimetype($filepath),
 		'status' => 1,
 	);
-	$dest = 'public://upload_images' . $prenode['#rel_path'];
+	// $dest = variable_get('upload_images_destination', '') . '/upload_images_module_dest' . $prenode['#rel_path'];
+	// $dest = file_build_uri(variable_get('upload_images_destination', '')) . '/upload_images_module_dest32' . $prenode['#rel_path'];
+	$dest = 'public://upload_images_files' . $prenode['#rel_path'];
 	file_prepare_directory($dest,FILE_CREATE_DIRECTORY);
 	$file = file_copy($file, $dest);
 	$node->upload_images_image[$node->language][0] = (array)$file;
