@@ -11,16 +11,32 @@ function upload_images_create(){
 	$accept = _get_accepted_ext();
 	$files = _get_files($path,$accept);
 	variable_set('files',$files);
+	foreach ($files as $file) {
+			$vars = array(
+      'path' => $file['#full_path'],
+      'alt' => 'Test alt',
+      'title' => $file['#name'],
+      'width' => 100,
+      'attributes' => array('class' => 'some-img', 'id' => 'my-img'),
+      );
+			$output_array[] = theme('image', $vars);
+	}
+
+	$variables = array( '#title' => 'some title', '#value' => 4, '#description' => 'just a desc');
+
+  	$imgs[] = theme('image', $vars);
+  	$box = theme('checkbox', $variables);
+  	// $imgs[] = $img;
+  	// echo $img;
 	if (empty($files)) {
 		$output = array(
 			'list_images' => array(
 				'#type' => 'markup',
 				'#markup' => '<p> There were no images found!</p>',
 			),
-			'submit_form' => drupal_get_form('submit_create_node_form'),
 		);
 	} else {
-		$output_array = array_keys($files);
+		// $output_array = array_keys($files);
 		$output = array(
 			'list_images' => array(
 				'#items' => $output_array,
@@ -28,8 +44,12 @@ function upload_images_create(){
 				'#theme' => 'item_list'
 			),
 			'submit_form' => drupal_get_form('submit_create_node_form'),
+			// 'athing' =>  array('#type' => 'markup', '#markup' => $box),
 		);
 	}
+	// echo "<img src=\"http://{$_SERVER['SERVER_ADDR']}/blink/drupal/sites/default/images_module/folder2/folder3/zebra.png\" width=200 >asd </img>";
+
+  	// print $img;
 	return $output;
 }
 
@@ -153,7 +173,7 @@ function _create_node($prenode) {
 	);
 	// $dest = variable_get('upload_images_destination', '') . '/upload_images_module_dest' . $prenode['#rel_path'];
 	// $dest = file_build_uri(variable_get('upload_images_destination', '')) . '/upload_images_module_dest32' . $prenode['#rel_path'];
-	$dest = 'public://upload_images_files/' . variable_get('upload_images_destination', '') . $prenode['#rel_path'];
+	$dest = 'public://upload_images_files/' . variable_get('upload_images_destination', '') . '/' . $prenode['#rel_path'];
 	file_prepare_directory($dest,FILE_CREATE_DIRECTORY);
 	$file = file_copy($file, $dest);
 	$node->upload_images_image[$node->language][0] = (array)$file;

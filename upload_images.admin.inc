@@ -39,9 +39,9 @@ function upload_images_admin_settings_validate($form, $form_state) {
 	if (substr($dest, -1, 1) == "/") {
 		form_set_error('upload_images_destination', t('The path dosen\'t need to end with a "/" (slash)!'));
 	}
-	if (!is_dir($dest)) {
-		form_set_error('upload_images_destination',t('Not a valid path to a directory!'));
-	}
+	// if (!is_dir($dest)) {
+	// 	form_set_error('upload_images_destination',t('Not a valid path to a directory!'));
+	// }
 }
 
 function upload_images_admin_settings_submit() {
