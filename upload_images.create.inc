@@ -13,6 +13,7 @@ function upload_images_create(){
 	variable_set('files',$files);
 	foreach ($files as $file) {
 			$vars = array(
+		// 'style_name' => 'thumbnail',
       'path' => $file['#full_path'],
       'alt' => 'Test alt',
       'title' => $file['#name'],
@@ -24,7 +25,7 @@ function upload_images_create(){
 
 	$variables = array( '#title' => 'some title', '#value' => 4, '#description' => 'just a desc');
 
-  	$imgs[] = theme('image', $vars);
+  	// $imgs[] = theme('image', $vars);
   	$box = theme('checkbox', $variables);
   	// $imgs[] = $img;
   	// echo $img;

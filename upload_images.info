@@ -1,6 +1,6 @@
 name = Upload Images Modules
 description = "Upload images from a folder and tag them"
-package = A
+package = Under Developing
 core = 7.x
 php = 5.x
 
@@ -12,3 +12,4 @@ files[] = upload_images.module
 files[] = upload_images.admin.inc
 files[] = upload_images.create.inc
 files[] = upload_images.install
+files[] = upload_images.drush.inc
