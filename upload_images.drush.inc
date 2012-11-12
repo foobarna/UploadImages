@@ -1,14 +1,14 @@
 <?php
 function upload_images_drush_help($command) {
 	switch ($command) {
-		case 'upload-images-cmd':
+		case 'cmd-ui':
 			return dt('a simple help. NOT');
 	}
 }
 
 function upload_images_drush_command() {
 	$items = array();
-	$items['upload-images-cmd'] = array(
+	$items['cmd-ui'] = array(
 		'description' => dt('run this'),
 		'arguments' => array(
 			'arg1' => dt('An optional argument'),
@@ -22,7 +22,7 @@ function upload_images_drush_command() {
 	return $items;
 }
 
-function drush_upload_images_upload_images_cmd($arg1 = NULL) {
+function drush_upload_images_cmd_ui($arg1 = NULL) {
 	if (isset($arg1)) {
 		drush_print($arg1);
 	} else {

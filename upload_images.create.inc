@@ -11,22 +11,24 @@ function upload_images_create(){
 	$accept = _get_accepted_ext();
 	$files = _get_files($path,$accept);
 	variable_set('files',$files);
-	foreach ($files as $file) {
-			$vars = array(
-		// 'style_name' => 'thumbnail',
-      'path' => $file['#full_path'],
-      'alt' => 'Test alt',
-      'title' => $file['#name'],
-      'width' => 100,
-      'attributes' => array('class' => 'some-img', 'id' => 'my-img'),
-      );
-			$output_array[] = theme('image', $vars);
-	}
+	// creating output array as
+	// foreach ($files as $file) {
+	// 	$vars = array(
+	// 		// 'style_name' => 'thumbnail',
+	// 		'path' => $file['#full_path'],
+	// 		'alt' => 'Test alt',
+	// 		'title' => $file['#name'],
+	// 		'width' => 100,
+	// 		// 'height' => NULL,
+	// 		'attributes' => array('class' => 'some-img', 'id' => 'my-img'),
+	// 	);
+	// 	$output_array[] = theme('image', $vars);
+	// }
 
-	$variables = array( '#title' => 'some title', '#value' => 4, '#description' => 'just a desc');
+	// $variables = array( '#title' => 'some title', '#value' => 4, '#description' => 'just a desc');
 
   	// $imgs[] = theme('image', $vars);
-  	$box = theme('checkbox', $variables);
+  	// $box = theme('checkbox', $variables);
   	// $imgs[] = $img;
   	// echo $img;
 	if (empty($files)) {
@@ -36,42 +38,78 @@ function upload_images_create(){
 				'#markup' => '<p> There were no images found!</p>',
 			),
 		);
-	} else {
-		// $output_array = array_keys($files);
-		$output = array(
-			'list_images' => array(
-				'#items' => $output_array,
-				'#title' => 'Images from folders',
-				'#theme' => 'item_list'
-			),
-			'submit_form' => drupal_get_form('submit_create_node_form'),
-			// 'athing' =>  array('#type' => 'markup', '#markup' => $box),
-		);
+		return $output;
 	}
+	// creating output + output_array as a list of names (iamge's name)
+	// else {
+	// 	$output_array = array_keys($files);
+	// 	$output = array(
+	// 		'list_images' => array(
+	// 			'#items' => $output_array,
+	// 			'#title' => 'Images from folders',
+	// 			'#theme' => 'item_list'
+	// 		),
+	// 		// 'submit_form' => drupal_get_form('submit_create_node_form'),
+	// 		// 'athing' =>  array('#type' => 'markup', '#markup' => $box),
+	// 	);
+	// }
+
+	$output[] = array(
+		'images_checkbox' => drupal_get_form('_create_images_checkbox'),
+	);
+
 	// echo "<img src=\"http://{$_SERVER['SERVER_ADDR']}/blink/drupal/sites/default/images_module/folder2/folder3/zebra.png\" width=200 >asd </img>";
 
+	// creating output as a list of <img src> code.
+
+	// $output[] = array('#type' => 'markup', '#markup' => '<p>The no of files: ' . count($output_array) . '</p>');
+	// foreach ($output_array as $key => $value) {
+	// 	$output[] = array('#type' => 'markup', '#markup' => '<p>' . $value . '</p>');
+	// }
+
+	// $output['submit_form'] = array(
+	// 	'#type' => 'submit',
+	// 	'#value' => 'Create',
+	// 	);
+	$output[] = array('submit_form' => drupal_get_form('submit_create_node_form'));
+	// echo $_SERVER['SERVER_ADDR'];
   	// print $img;
-	return $output;
+	return $output	;
 }
 
 function submit_create_node_form(){
-	$form['#redirect'] = '';
-	$form['submit'] = array(
+	$form['submit_btn'] = array(
 		'#type' => 'submit',
 		'#value' => 'Create',
 	);
 	return $form;
 }
 
-function submit_create_node_form_submit(){
+function _create_images_checkbox() {
+	$form['images_checkbox'] = array(
+		'#type' => 'checkboxes',
+		'#options' => drupal_map_assoc(array_keys(_get_files(variable_get('upload_images_path',''),_get_accepted_ext()))),
+		'#title' => 'fucking works',
+		);
+	return $form;
+}
+
+function submit_create_node_form_submit($form, $form_state){
 	$files = variable_get('files','0');
-	$dest = variable_get('upload_images_destination','');
-	if ($files) {
-		drupal_set_message('variable images is NOT empty!' . $dest,'warning');
-	} else {
-		drupal_set_message('There are no images!','error');
+	// $dest = variable_get('upload_images_destination','');
+	// if ($files) {
+	// 	drupal_set_message('variable images is NOT empty!' . $dest,'warning');
+	// } else {
+	// 	drupal_set_message('There are no images!','error');
+	// }
+	$aux = array_keys($form_state['values']);
+	$selected = 'items selected: </br>';
+	foreach ($aux as $key => $value) {
+		$selected .= '--' . $value . '</br>';
 	}
-	_create_content($files);
+	drupal_set_message($selected, 'status');
+
+	// _create_content($files);
 }
 
 function _accepted($name, $accept){
@@ -99,12 +137,15 @@ function _get_files($path, $accept, $rel_path = ""){
 			// asort($files_next);
 			$files = array_merge($files, $files_next);
 		} elseif (_accepted($entry, $accept)) {
+			if (filesize($next_path) > 2097152) {
+				continue;
+			}
 			$files[$next_rel_path] = array(
-								"#name" => $entry,
-								"#full_path" => $next_path,
-								"#rel_path" => $rel_path,
-								"#taxonomy_terms" => _taxonomy_terms_from_path($rel_path),
-								);
+				"#name" => $entry,
+				"#full_path" => $next_path,
+				"#rel_path" => $rel_path,
+				"#taxonomy_terms" => _taxonomy_terms_from_path($rel_path),
+			);
 		}
 	}
 	closedir($dir);
