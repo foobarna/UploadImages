@@ -22,7 +22,7 @@ function upload_images_create(){
 		return $output;
 	}
 
-	$output[] = array('#type' => 'markup', '#markup' => '<p>The no of files: ' . count($files) . '</p>');
+	$output[] = array('#type' => 'markup', '#markup' => '<p>The #no111 of files: ' . count($files) . '</p>');
 
 	$output[] = array('list_images_checkboxes' => drupal_get_form('_create_list_images_checkbox_form'));
 
