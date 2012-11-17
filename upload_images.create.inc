@@ -11,7 +11,6 @@ function upload_images_create(){
 	$accept = _get_accepted_ext();
 	$files = _get_files($path,$accept);
 	variable_set('files',$files);
-
 	if (empty($files)) {
 		$output = array(
 			'list_images' => array(
